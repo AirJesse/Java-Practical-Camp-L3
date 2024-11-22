@@ -8,9 +8,12 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/bank_oauth?useUnicode=true&characterEncoding=utf-8&useSSL=false     #数据库url
-      username: root
-      password: zap
+#      url: jdbc:mysql://127.0.0.1:3306/bank_oauth?useUnicode=true&characterEncoding=utf-8&useSSL=false     #数据库url
+#      username: root
+#      password: zap
+      url: jdbc:mysql://192.168.120.33:3306/bank_oauth?useUnicode=true&characterEncoding=utf-8
+      username: l3camp
+      password: camp123456
       #连接池建立时创建的初始化连接数
       initial-size: 5
       #连接池中最大的活跃连接数
@@ -40,9 +43,10 @@ spring:
   ############################### redis配置##################
   redis:
     # Redis 服务地址
-    host: localhost
+    host: 192.168.120.33
     # Redis 服务连接端口
     port: 6379
+    password: redis
     lettuce:
       pool:
         # 连接池最大连接数（使用负值表示没有限制） 默认 8

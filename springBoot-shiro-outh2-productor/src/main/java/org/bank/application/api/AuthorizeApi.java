@@ -75,6 +75,7 @@ public class AuthorizeApi {
                 return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
             }
             //得到到客户端重定向地址
+            //其实已经不需要redirectURI了。-lujiachao
             String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
             Subject subject = SecurityUtils.getSubject();
             //如果用户没有登录，跳转到登陆页面
@@ -115,6 +116,7 @@ public class AuthorizeApi {
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(new URI(response.getLocationUri()));
             model.addAttribute("code", authorizationCode);
+            SecurityUtils.getSubject().logout();
             return "redirect";
 //            return new ResponseEntity(headers, HttpStatus.valueOf(response.getResponseStatus()));
         } catch (OAuthProblemException e) {
@@ -149,7 +151,6 @@ public class AuthorizeApi {
         vo.setType("1");
         try {
             String token=userService.loginForOuth(vo);
-//            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
             CustomPasswordToken customPasswordToken = new CustomPasswordToken(token, ReqType.OUTHCODE.toString());
             subject.login(customPasswordToken);
             return true;

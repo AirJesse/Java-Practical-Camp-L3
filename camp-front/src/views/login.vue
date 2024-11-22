@@ -55,7 +55,7 @@ export default {
 
     methods: {
         submitLogin() {
-            console.log(Cookies.get('satoken'));
+            
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
                     post("/user/doLogin", this.loginForm).then(res => {
@@ -69,7 +69,11 @@ export default {
                             message: '登入成功',
                             type: 'success',
                         });
+                        const satoken = Cookies.get('satoken');
+                        console.log(satoken);
+                        console.log(satoken.expires);
                         Cookies.set('username', this.loginForm.username);
+                    
                         this.$router.push('/home');
                     })
 

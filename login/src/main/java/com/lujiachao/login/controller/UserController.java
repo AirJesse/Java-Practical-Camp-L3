@@ -53,8 +53,9 @@ public class UserController {
         if (user == null) {
             return SaResult.error("登入失败");
         }
-        StpUtil.login(user.getId());
-        loginEventPublisher.publishLoginEvent(user);
+        StpUtil.login(user.getId(), false);
+        String tokenId = StpUtil.getTokenValue();
+        loginEventPublisher.publishLoginEvent(user, tokenId);
         return SaResult.ok("登入成功");
 
     }

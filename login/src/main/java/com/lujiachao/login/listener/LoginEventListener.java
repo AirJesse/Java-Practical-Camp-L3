@@ -9,6 +9,7 @@ import com.lujiachao.login.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,14 @@ public class LoginEventListener {
 
     @EventListener
     @Transactional
+    @Async
     public void onLoginEvent(LoginEvent event) {
         User user = event.getUser();
         log.info("用户已登入：{}", user.getUserName());
         Login login = new Login();
         login.setUserName(user.getUserName());
-        login.setTokenId(StpUtil.getTokenValue());
+        login.setTokenId(event.getTokenId());
         loginService.updateToken(login);
+        loginCountService.addLoginCount(user.getUserName());
     }
 }

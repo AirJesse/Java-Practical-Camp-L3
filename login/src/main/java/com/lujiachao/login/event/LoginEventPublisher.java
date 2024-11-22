@@ -12,7 +12,7 @@ public class LoginEventPublisher {
         this.eventPublisher = eventPublisher;
     }
 
-    public void publishLoginEvent(User user) {
-        eventPublisher.publishEvent(new LoginEvent(this, user));
+    public void publishLoginEvent(User user, String tokenId) {
+        eventPublisher.publishEvent(new LoginEvent(this, user,tokenId));
     }
 }

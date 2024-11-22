@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface LoginCountService extends IService<LoginCount> {
 
+    int addLoginCount(String userName);
 }

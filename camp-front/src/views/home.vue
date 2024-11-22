@@ -5,7 +5,7 @@
         <el-col :span="12">
           <h1>系统介绍</h1>
         </el-col>
-        
+
         <el-col :span="12" class="text-right">
           <span>当前用户：{{ username }}</span>
           <el-button type="primary" @click="logout">注销</el-button>
@@ -55,8 +55,14 @@ export default {
     });
 
     const logout = () => {
-      Cookies.remove('satoken'); // 移除登录的Cookie
-      Cookies.remove('username'); // 移除用户名
+      // Cookies.remove('satoken'); // 移除登录的Cookie
+      // Cookies.remove('username'); // 移除用户名
+      const allCookies = Cookies.get();
+      console.log(allCookies);
+      // 遍历所有Cookie并删除
+      for (const cookieName in allCookies) {
+        Cookies.remove(cookieName);
+      }
       router.push('/login'); // 跳转到登录页
     };
 

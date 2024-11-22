@@ -1,5 +1,6 @@
 package com.lujiachao.login.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.lujiachao.login.controller.vo.LoginRecordResponse;
 import com.lujiachao.login.entity.LoginCount;
 import com.lujiachao.login.service.UserService;
@@ -26,22 +27,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    @Autowired
-    private LoginService loginService;
 
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private LoginCountService loginCountService;
 
-    @PostMapping
-    public String login(String username, String password) {
-        return "hello world";
-    }
 
     @GetMapping("info")
     public List<LoginRecordResponse> findAllLoginRecord() {
+
         List<LoginCount> list = loginCountService.list();
         return BeanCopyUtil.copyList(list, LoginRecordResponse.class);
     }

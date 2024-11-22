@@ -2,7 +2,7 @@ package com.lujiachao.login.service.impl;
 
 import com.lujiachao.login.entity.User;
 import com.lujiachao.login.mapper.UserMapper;
-import com.lujiachao.login.service.IUserService;
+import com.lujiachao.login.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-12
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 }

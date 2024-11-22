@@ -2,7 +2,7 @@ package com.lujiachao.login.service.impl;
 
 import com.lujiachao.login.entity.LoginCount;
 import com.lujiachao.login.mapper.LoginCountMapper;
-import com.lujiachao.login.service.ILoginCountService;
+import com.lujiachao.login.service.LoginCountService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-12
  */
 @Service
-public class LoginCountServiceImpl extends ServiceImpl<LoginCountMapper, LoginCount> implements ILoginCountService {
+public class LoginCountServiceImpl extends ServiceImpl<LoginCountMapper, LoginCount> implements LoginCountService {
 
 }

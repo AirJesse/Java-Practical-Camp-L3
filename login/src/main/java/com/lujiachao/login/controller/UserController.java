@@ -46,8 +46,8 @@ public class UserController {
     @Autowired
     private LoginEventPublisher loginEventPublisher;
 
-    @PostMapping("doLogin")
     @SaIgnore
+    @PostMapping("doLogin")
     public SaResult doLogin(@RequestBody @Valid LoginRequest loginRequest) {
         User user = userService.getUserForLogin(loginRequest.getUsername(), loginRequest.getPassword());
         if (user == null) {

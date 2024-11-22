@@ -5,7 +5,7 @@
                 L3Camp-前端
                 <P style="font-size:medium;">系统登入</P>
             </h3>
-            
+
             <el-form-item prop="username">
                 <el-input type="text" v-model="loginForm.username" placeholder="请输入用户名">
                 </el-input>
@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { get, post } from "@/api/request";
+import { ElMessage, ElMessageBox } from "element-plus";
 export default {
     name: "Login",
     data() {
@@ -35,8 +37,7 @@ export default {
             captchaUrl: "",
             loginForm: {
                 username: "admin",
-                password: "ssssss",
-                code: ''
+                password: "ssssss"
             },
             checked: true,
             rules: {
@@ -48,14 +49,31 @@ export default {
 
         }
     },
-    
+
     methods: {
-        submitLogin() {
+         submitLogin() {
+            console.log(localStorage.getItem('satoken'));
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    alert('提交成功');
+                    post("/user/doLogin", this.loginForm).then(res =>{
+                         const code = res.data.code;
+                         console.log(res.data);
+                         if(code !== 200){
+                            ElMessageBox.alert('请重新输入！','用户名或密码错误');
+                            return;
+                         }
+                         localStorage.setItem('satoken',)
+                         ElMessage({
+                            message:'登入成功',
+                            type:'success',
+                         });
+                        //  this.$router.push('/home');
+                        
+                    })
+                    
+
                 } else {
-                    this.$message.error('登录出错请重新输入');
+                    this.$message.error('请重新输入');
                     return false;
                 }
             });
@@ -64,7 +82,7 @@ export default {
 };
 </script>
 
-<style lang="less" >
+<style lang="less">
 .loginContainer {
     border-radius: 15px;
     background-clip: padding-box;

@@ -1,13 +1,15 @@
 import axios from "axios";
-import { da } from "element-plus/es/locale";
 const service = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API,
     timeout: 5000
 });
 
 service.defaults.headers.post['Content-Type'] = 'application/json';
+service.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+service.defaults.withCredentials = true;
 
 service.interceptors.request.use(config => {
+    // config.headers['Access-Control-Allow-Origin'] = '*'
     const token = localStorage.getItem('satoken');
     if (token) {
         config.headers['satoken'] = token;

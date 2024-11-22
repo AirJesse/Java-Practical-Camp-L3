@@ -43,7 +43,6 @@ public class LoginController {
     @GetMapping("info")
     public List<LoginRecordResponse> findAllLoginRecord() {
         List<LoginCount> list = loginCountService.list();
-        List<LoginRecordResponse> responses = new ArrayList<>();
         return BeanCopyUtil.copyList(list, LoginRecordResponse.class);
     }
 }

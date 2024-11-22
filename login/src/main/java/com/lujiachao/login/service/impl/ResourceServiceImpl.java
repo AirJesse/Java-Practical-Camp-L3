@@ -2,7 +2,7 @@ package com.lujiachao.login.service.impl;
 
 import com.lujiachao.login.entity.Resource;
 import com.lujiachao.login.mapper.ResourceMapper;
-import com.lujiachao.login.service.IResourceService;
+import com.lujiachao.login.service.ResourceService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-11-12
  */
 @Service
-public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> implements IResourceService {
+public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> implements ResourceService {
 
 }

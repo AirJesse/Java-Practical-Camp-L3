@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author lujiachao
  * @since 2024-11-12
  */
-public interface IResourceService extends IService<Resource> {
+public interface ResourceService extends IService<Resource> {
 
 }

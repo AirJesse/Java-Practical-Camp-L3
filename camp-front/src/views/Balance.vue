@@ -14,12 +14,14 @@
         <p>余额: {{ balance }}</p>
         <el-alert class="infoAlert" title="操作提示" description="采用会话Cookie来保存各类凭证，注销会清空本域Cookie。如遇各种问题，建议重启浏览器。" show-icon effect="light" type="info" :closable="false" />
       </div>
+
     </el-main>
   </el-container>
 </template>
 
 <script>
 import Cookies from "js-cookie";
+
 export default {
   name: 'Balance',
   data() {
@@ -55,6 +57,7 @@ export default {
         this.fetchAccessToken(code);
       }
     },
+
     async fetchAccessToken(code) {
       try {
         const host = import.meta.env.VITE_APP_BANK_API;
@@ -137,4 +140,5 @@ export default {
   margin-top: 30px;
   width: 60%;
 }
+
 </style>

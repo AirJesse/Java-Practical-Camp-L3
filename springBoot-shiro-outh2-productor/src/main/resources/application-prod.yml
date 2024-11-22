@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3336/bank_oauth?useUnicode=true&characterEncoding=utf-8
+      username: l3camp
+      password: camp123456
+  redis:
+    host: localhost
+    port: 3379
+    password: redis123456

@@ -52,6 +52,11 @@ public class UserAppService implements UserService {
     @Autowired
     private SysDeptRepository sysDeptRepository;
 
+    public static void main(String[] args) {
+        String wangxiaoming666 = PasswordUtils.encode("wangxiaoming666", "1d69ee8edf304fee8d27");
+        System.out.println(wangxiaoming666);
+    }
+
     @Override
     public String register(RegisterReqVO vo) {
         SysUser sysUser = new SysUser();
@@ -378,4 +383,5 @@ public class UserAppService implements UserService {
         //清空权鉴缓存
         redisService.delete(Constant.IDENTIFY_CACHE_KEY + userId);
     }
+
 }

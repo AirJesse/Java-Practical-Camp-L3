@@ -13,6 +13,7 @@ const service = axios.create({
   timeout: Config.timeout // 请求超时时间
 })
 axios.defaults.crossDomain = true
+axios.defaults.withCredentials = true
 // request拦截器
 service.interceptors.request.use(
   config => {
@@ -23,6 +24,9 @@ service.interceptors.request.use(
       config.headers['refresh_token'] = getRefreshToken() // 让每个请求携带自定义token 请根据实际情况自行修改
     }
     config.headers['Content-Type'] = 'application/json; charset=UTF-8'
+    config.headers['Accept'] = 'application/json'
+    config.headers['X-Requested-With'] = 'XMLHttpRequest'
+    config.headers['Access-Control-Allow-Origin'] = '*'
     return config
   },
   error => {

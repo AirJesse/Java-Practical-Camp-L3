@@ -1,0 +1,109 @@
+server:
+  port: 8090 #服务端口号
+spring:
+  application:
+    name: loginServiceCloudProvider  #微服务名称，对外暴漏的微服务名称，十分重要
+  ################################################## JDBC 通用配置  ##########################################
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/bank_oauth?useUnicode=true&characterEncoding=utf-8&useSSL=false     #数据库url
+      username: root
+      password: zap
+      #连接池建立时创建的初始化连接数
+      initial-size: 5
+      #连接池中最大的活跃连接数
+      max-active: 20
+      #连接池中最小的活跃连接数
+      min-idle: 5
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      validation-query: SELECT 1 FROM DUAL
+      validation-query-timeout: 30000
+      #是否在获得连接后检测其可用性
+      test-on-borrow: false
+      #是否在连接放回连接池后检测其可用性
+      test-on-return: false
+      #是否在连接空闲一段时间后检测其可用性
+      test-while-idle: true
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall
+
+  ############################### redis配置##################
+  redis:
+    # Redis 服务地址
+    host: localhost
+    # Redis 服务连接端口
+    port: 6379
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 100
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: PT10s
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 30
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 1
+    #链接超时时间
+    timeout: PT10s
+  ###############################devtools###############################
+  devtools:
+    restart:
+      poll-interval: 3000ms
+      quiet-period: 2999ms
+
+###############################logging配置###############################
+logging:
+  file:
+    path: ./logs
+    name: ${logging.file.path}/${spring.application.name}.log
+  level:
+    root: info
+    org.bank: debug
+
+
+###############################JWT配置###############################
+jwt:
+  secretKey: 78944878877848fj
+  accessTokenExpireTime: PT2H
+  refreshTokenExpireTime: PT8H
+  refreshTokenExpireAppTime : P30D
+  issuer: bank.lizongle.c
+
+
+
+
+############################### 不检查 spring.config.import=configserver:##################
+#  cloud:
+#    config:
+#      enabled: false
+###################################### MyBatis 配置 ######################################
+mybatis:
+  # 指定 mapper.xml 的位置
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  #扫描实体类的位置,在此处指明扫描实体类的包，在 mapper.xml 中就可以不写实体类的全路径名
+  type-aliases-package: org.bank.domain.entity
+  configuration:
+    #默认开启驼峰命名法，可以不用设置该属性
+    map-underscore-to-camel-case: true
+########################################## spring cloud 使用 Spring Boot actuator 监控完善信息###################################
+# Spring Boot 2.50对 actuator 监控屏蔽了大多数的节点，只暴露了 heath 节点，本段配置（*）就是为了开启所有的节点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"   # * 在yaml 文件属于关键字，所以需要加引号
+info:
+  app.name: bank-login-provider
+  company.name: bank.lizongle.c
+  build.aetifactId: @project.artifactId@
+  build.version: @project.version@

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      xmlns:th="http://www.thymeleaf.org"
+>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/custom.form.css">
+
+</head>
+<body>
+
+<div class="panel panel-default operation_client" hidden>
+    <div class="panel-heading title"></div>
+    <div class="layui-card-body">
+        <form class="layui-form layui-form-pane" action="" lay-filter="clientInfo"
+              style="width: 700px;margin-top: 10px">
+            <input name="id" hidden/>
+            <div class="layui-form-item">
+                <label class="layui-form-label">客户端名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="clientName" class="layui-input"  autocomplete="off" placeholder="请输入客户端名称">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label ">客户端密码</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="clientSecret" class="layui-input"  autocomplete="off" placeholder="请输入客户端密码">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="submit">保存</button>
+                    <button class="layui-btn layui-btn-primary" id="btn_cancel">返回</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="client-table">
+    <table class="layui-table" id="clientTable" lay-filter="clientTable"></table>
+    <div id="laypage" class="layui-laypage-btn"></div>
+</div>
+<div id="deptTree" style="display: none"></div>
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-group">
+        <button shiro:hasPermission="sys:client:add" type="button" class="layui-btn" lay-event="addClient">
+            <i class="layui-icon">&#xe608;</i> 添加
+        </button>
+    </div>
+</script>
+<script type="text/html" id="tool">
+    <a shiro:hasPermission="sys:client:update" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a shiro:hasPermission="sys:client:deleted" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script src="/layui/layui.all.js"></script>
+<script src="/js/core.util.js"></script>
+<script th:inline="none">
+    var table = layui.table;
+    var laypage = layui.laypage
+    var form = layui.form;
+    var layer = layui.layer;
+    var $ = jQuery = layui.jquery;
+    var flag;
+    layui.use(['table', 'laypage', 'layer'], function () {
+
+        //查询参数
+        var searchParam = {
+            clientName: null,
+            pageNum: 1,
+            pageSize: 10
+        };
+
+        CoreUtil.sendAjax("/client/page", JSON.stringify(searchParam), function (res) {
+            //初始化分页器
+            laypageTable(res.data.totalRows, searchParam.pageNum);
+            //初始化渲染数据
+            if (res.data.list != null) {
+                loadTable(res.data.list);
+            }
+        }, "POST", false, function (res) {
+            layer.msg("抱歉！您暂无获取操作客户端列表的权限");
+            var noAuthorityData = [];
+            loadTable(noAuthorityData);
+        });
+
+
+        //渲染分页插件
+        var laypageTable = function (count, currentPage) {
+            laypage.render({
+                elem: 'laypage'
+                , count: count
+                , limit: searchParam.pageSize
+                , layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+                , curr: location.hash.replace('#!currentPage=', '') //获取起始页
+                , hash: 'currentPage' //自定义hash值
+                , jump: function (obj, first) {
+                    if (!first) {
+                        flag = true;
+                        searchParam.pageNum = obj.curr;
+                        searchParam.pageSize = obj.limit;
+                        CoreUtil.sendAjax("/client/page", JSON.stringify(searchParam), function (res) {
+                            if (res.data.list != null) {
+                                loadTable(res.data.list);
+                                laypageTable(res.data.totalRows, searchParam.pageNum);
+                            }
+                        }, "POST", false, function (res) {
+                            layer.msg("抱歉！您暂无获取操作客户端列表的权限");
+                            var noAuthorityData = [];
+                            loadTable(noAuthorityData);
+                        });
+                    }
+                }
+            });
+        };
+
+        //渲染table
+        var loadTable = function (data) {
+            //展示已知数据
+            table.render({
+                elem: '#clientTable'
+                , cols: [
+                    [
+                        {type: 'checkbox', fixed: 'left'},
+                        {field: 'id', title: 'ID', width: 300, sort: true},
+                        {field: 'clientId', title: '客户端Id', width: 300},
+                        {field: 'clientName', title: '客户端名称', width: 140},
+                        {toolbar: "#tool", title: '操作'}
+                    ]
+                ]
+                , data: data
+                , even: true
+                , limit: data.length
+                , limits: [10, 20, 30, 40, 50]
+                , toolbar: '#toolbar'
+            });
+        };
+
+
+        //操作项事件
+        table.on('tool(clientTable)', function (obj) {
+            var data = obj.data;
+            switch (obj.event) {
+                case 'del':
+                    deletedClient(data.id, data.clientName);
+                    break;
+                case 'edit':
+                    selectNode = null;
+                    $(".client-table").hide();
+                    $(".operation_client").show();
+                    $(".title").html("编辑客户端");
+                    $(".operation_client input[name=id]").val(data.id);
+                    $(".operation_client input[name=clientName]").val(data.clientName);
+                    $(".operation_client input[name=clientSecret]").val(data.clientSecret);
+                    $(".operation_client input[name=clientSecret]").attr("disabled","disabled");
+                    form.render(); //更新全部
+                    break;
+            }
+
+        });
+
+        //执行查询
+        $("#search").click(function () {
+            searchParam.clientName = $("#clientName").val();
+            searchParam.pageNum = 1;
+            CoreUtil.sendAjax("/client/page", JSON.stringify(searchParam), function (res) {
+                //初始化分页器
+                laypageTable(res.data.totalRows, searchParam.pageNum);
+                //初始化渲染数据
+                if (res.data.list != null) {
+                    loadTable(res.data.list);
+                }
+            }, "POST", false, function (res) {
+                layer.msg("抱歉！您暂无获取操作客户端列表的权限");
+                var noAuthorityData = [];
+                loadTable(noAuthorityData);
+            });
+        });
+
+        table.on('toolbar(clientTable)', function (obj) {
+            switch (obj.event) {
+                case 'addClient':
+                    selectNode = null;
+                    $(".client-table").hide();
+                    $(".operation_client").show();
+                    $(".title").html("新增客户端");
+                    $(".operation_client input[name=id]").val("");
+                    $(".operation_client input[name=clientName]").val("");
+                    $(".operation_client input[name=clientSecret]").val("");
+                    form.render(); //更新全部
+                    break;
+            }
+        });
+        var deletedClient = function (clientId, menuName) {
+            layer.open({
+                content: '确定要删除' + menuName + "?",
+                yes: function (index, layero) {
+                    layer.close(index); //如果设定了yes回调，需进行手工关闭
+                    CoreUtil.sendAjax("/client/delete/" + clientId, null, function (res) {
+                        layer.msg(res.msg);
+                        $(".layui-laypage-btn").click();
+                    }, "DELETE", false, function (res) {
+                        layer.msg("抱歉！您暂无删除客户端数据的权限");
+                    });
+                }
+            });
+        };
+        $("#btn_cancel").click(function () {
+            $(".client-table").show();
+            $(".operation_client").hide();
+            return false;
+        });
+
+
+        form.on('submit(submit)', function (data) {
+            if (data.field.id === undefined || data.field.id === null || data.field.id === "") {
+                if(data.field.clientSecret === undefined || data.field.clientSecret === null || data.field.clientSecret === ""){
+                    layer.msg("抱歉！请输入客户端密码");
+                }
+                CoreUtil.sendAjax("/client/add", JSON.stringify(data.field), function (res) {
+                    $(".client-table").show();
+                    $(".layui-laypage-btn").click();
+                    $(".operation_client").hide();
+                }, "POST", false, function (res) {
+                    layer.msg("抱歉！您暂无新增客户端的权限");
+                });
+            } else {
+                CoreUtil.sendAjax("/client/update", JSON.stringify(data.field), function (res) {
+                    $(".client-table").show();
+                    $(".operation_client").hide();
+                }, "PUT", false, function (res) {
+                    layer.msg("抱歉！您暂无编辑客户端的权限");
+                });
+            }
+            return false;
+        });
+
+
+    });
+</script>
+</body>
+</html>

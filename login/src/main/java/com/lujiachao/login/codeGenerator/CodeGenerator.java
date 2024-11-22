@@ -22,6 +22,7 @@ public class CodeGenerator {
                         .xml("mapper.xml")
                 )
                 .strategyConfig(builder -> builder
+                        .addTablePrefix("sys_")
                         .entityBuilder()
                         .enableLombok()
                 )

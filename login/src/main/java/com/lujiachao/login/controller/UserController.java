@@ -1,5 +1,6 @@
 package com.lujiachao.login.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.context.model.SaRequest;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
@@ -7,6 +8,8 @@ import com.lujiachao.login.controller.vo.LoginRecordResponse;
 import com.lujiachao.login.controller.vo.LoginRequest;
 import com.lujiachao.login.entity.LoginCount;
 import com.lujiachao.login.entity.User;
+import com.lujiachao.login.event.LoginEvent;
+import com.lujiachao.login.event.LoginEventPublisher;
 import com.lujiachao.login.service.LoginCountService;
 import com.lujiachao.login.service.LoginService;
 import com.lujiachao.login.service.UserService;
@@ -40,13 +43,18 @@ public class UserController {
     @Autowired
     private LoginCountService loginCountService;
 
+    @Autowired
+    private LoginEventPublisher loginEventPublisher;
+
     @PostMapping("doLogin")
+    @SaIgnore
     public SaResult doLogin(@RequestBody @Valid LoginRequest loginRequest) {
         User user = userService.getUserForLogin(loginRequest.getUsername(), loginRequest.getPassword());
-        if(user == null) {
+        if (user == null) {
             return SaResult.error("登入失败");
         }
         StpUtil.login(user.getId());
+        loginEventPublisher.publishLoginEvent(user);
         return SaResult.ok("登入成功");
 
     }
@@ -54,6 +62,17 @@ public class UserController {
     @GetMapping("isLogin")
     public String isLogin(String username, String password) {
         return "已登入：" + StpUtil.isLogin();
+    }
+
+    @GetMapping("tokenInfo")
+    public SaResult tokenInfo() {
+        return SaResult.data(StpUtil.getTokenInfo());
+    }
+
+    @PostMapping
+    public SaResult logout() {
+        StpUtil.logout();
+        return SaResult.ok();
     }
 
 }

@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface LoginService extends IService<Login> {
 
+    Login updateToken(Login login);
 }

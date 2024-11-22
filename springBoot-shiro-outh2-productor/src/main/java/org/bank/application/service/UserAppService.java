@@ -53,7 +53,7 @@ public class UserAppService implements UserService {
     private SysDeptRepository sysDeptRepository;
 
     public static void main(String[] args) {
-        String wangxiaoming666 = PasswordUtils.encode("wangxiaoming666", "1d69ee8edf304fee8d27");
+        String wangxiaoming666 = PasswordUtils.encode("xiaoming123", "1d69ee8edf304fee8d27");
         System.out.println(wangxiaoming666);
     }
 

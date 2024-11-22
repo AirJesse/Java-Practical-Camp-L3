@@ -20,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -98,5 +99,43 @@ public class AccessTokenApi {
                     .buildJSONMessage();
             return new ResponseEntity(res.getBody(), HttpStatus.valueOf(res.getResponseStatus()));
         }
+    }
+
+    @GetMapping("/accessTokenByCode")
+    public HttpEntity getTokenByCode(HttpServletRequest request)
+            throws URISyntaxException, OAuthSystemException {
+        String code = request.getParameter("code");
+        if (StringUtils.isEmpty(code)) {
+            OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                    .setError(OAuthError.TokenResponse.INVALID_REQUEST)
+                    .setErrorDescription("Code is missing")
+                    .buildJSONMessage();
+            return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+        }
+
+        String userId = oAuthService.getUserIdByAuthCode(code);
+        if (StringUtils.isEmpty(userId)) {
+            OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                    .setError(OAuthError.TokenResponse.INVALID_GRANT)
+                    .setErrorDescription("Invalid or expired code")
+                    .buildJSONMessage();
+            return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+        }
+
+        // 生成 accessToken
+        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+        final String accessToken = oauthIssuerImpl.accessToken();
+        oAuthService.addAccessToken(accessToken, userId);
+
+        // 构建 OAuth 响应
+        OAuthResponse response = OAuthASResponse
+                .tokenResponse(HttpServletResponse.SC_OK)
+                .setAccessToken(accessToken)
+                .setParam("userId", userId)
+                .setExpiresIn(String.valueOf(oAuthService.getExpireIn()))
+                .buildJSONMessage();
+
+        return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+
     }
 }

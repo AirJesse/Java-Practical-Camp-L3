@@ -20,5 +20,7 @@ public interface SysBankRepository {
     List<BankMoney> selectAll( );
 
 
+    BankMoney selectByPrimaryKey(String userId);
 
+    BankMoney selectByUsername(String username);
 }

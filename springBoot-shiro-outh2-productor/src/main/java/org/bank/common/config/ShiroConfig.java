@@ -105,6 +105,7 @@ public class ShiroConfig {
         // 配置不会被拦截的链接 顺序判
         filterChainDefinitionMap.put("/outh/authorize", "anon");
         filterChainDefinitionMap.put("/outh/accessToken", "anon");
+        filterChainDefinitionMap.put("/outh/accessTokenByCode", "anon");
         filterChainDefinitionMap.put("/bank-other/**", "anon");
         filterChainDefinitionMap.put("/sys/user/login", "anon");
         filterChainDefinitionMap.put("/sys/user/token", "anon");

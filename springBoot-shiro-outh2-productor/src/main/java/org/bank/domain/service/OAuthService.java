@@ -14,6 +14,10 @@ public interface OAuthService {
     //验证access token是否有效
     boolean checkAccessToken(String accessToken);
 
+    String getUserIdByAuthCode(String authCode);
+
+    String getUserIdByAccessToken(String accessToken);
+
     String getUsernameByAuthCode(String authCode);
     String getUsernameByAccessToken(String accessToken);
 

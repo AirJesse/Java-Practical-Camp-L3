@@ -7,8 +7,13 @@
     values (#{username,jdbcType=VARCHAR}, #{money})
   </insert>
     <select id="selectAll" resultType="org.bank.domain.entity.BankMoney" parameterType="org.bank.domain.vo.resp.BankMoneyRespVo">
-select  id ,username as userName, money as money
-from bank_money
+        select id, username as userName, money as money
+        from bank_money
+    </select>
 
+    <select id="selectByUsername" parameterType="java.lang.String" resultType="org.bank.domain.entity.BankMoney">
+        SELECT id, username as userName, money as money
+        FROM bank_money
+        WHERE username = #{username}
     </select>
 </mapper>

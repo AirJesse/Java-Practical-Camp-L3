@@ -16,4 +16,5 @@ public interface BankService {
     List<BankMoney> pageInfo( );
 
 
+    BankMoney getCurrentUserBankMoney();
 }

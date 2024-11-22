@@ -7,12 +7,8 @@ import org.bank.domain.aop.annotation.LogAnnotation;
 import org.bank.domain.entity.BankMoney;
 import org.bank.domain.service.BankService;
 import org.bank.domain.vo.req.BankMoneyAddReqVo;
-import org.bank.domain.vo.resp.PageVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,6 +34,13 @@ public class bankApi {
         DataResult<Boolean> result = DataResult.success();
         boolean add = bankService.add(vo);
         result.setData(add);
+        return result;
+    }
+
+    @GetMapping("/myMoney")
+    public DataResult<BankMoney> getCurrentUserBankMoney() {
+        DataResult<BankMoney> result = DataResult.success();
+        result.setData(bankService.getCurrentUserBankMoney());
         return result;
     }
 

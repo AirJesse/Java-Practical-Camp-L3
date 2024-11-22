@@ -1,0 +1,18 @@
+server. port=8351
+#??xml?????
+mybatis. mapper-locations=classpath: mapping/*Mapping.xml #??mybatis?????PO]0?
+mybatis. type-aliases-package=com.jiker. login.mapper
+#??????????????????user_id??pojo??????userIdmybatis. configuration. mapUnderscoreToCamelcase=true
+logging.level.com.rb.login.mapper=debug #page
+spring.thymeleaf.prefix=classpath:/templates
+spring.resources.static-locations=classpath: /META-INF/resources/,classpath: /resources/, classpath: /static/, classpath: /public/, classpath:/templates/ #DataSource
+spring.datasource.type=com.alibaba.druid.pool.DruidDataSource spring.datasource.driver-class-name com.mysql.cj.jdbc.Driver
+spring. datasource. url idbc: mysql: //localhost: 3306/test?serverTimezone=Asia/Shanghai&usessL=false&useUnicode=true&characterEncoding=utf-8 spring.datasource.username=root
+spring. datasource. password=root #???????????
+spring. datasource.initialsize=5 spring. datasource.minIdle=5 spring. datasource. maxActive=20 #?????????????
+spring. datasource. maxwait=60000
+#???????????????????????????????spring.datasource.timeBetweenEvictionRunsMillis=60000 #??????????????????????
+spring.datasource.minEvictableIdleTimeMillis=300000 spring. datasource. validationQuery=SELECT 1 FROM DUAL spring.datasource.testwhileIdle=true
+spring. datasource. testünBorro=false spring. datasource. testonReturn=false
+#?? FPSCache,????????? -PSCache??? spring. datasource. poolpreparedstatements=true
+spring. datasource.maxPoolPreparedstatementPerConnectionsize=20 

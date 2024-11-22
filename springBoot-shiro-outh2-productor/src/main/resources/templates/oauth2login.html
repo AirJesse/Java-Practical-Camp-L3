@@ -73,9 +73,17 @@
             data = data.field
             var url = window.location.href;
             var params = queryURLParams(url);
-            var herfUrl = window.location.protocol + "//" + window.location.host + "" + window.location.pathname;
-            window.location.href = herfUrl + "?" + "client_id=" + params.client_id + "&response_type=" + params.response_type
-                + "&username=" + data.username + "&password=" + data.password + "&redirect_uri=" + params.redirect_uri + "&client_secret=" + params.client_secret;
+            var hrefUrl = window.location.protocol + "//" + window.location.host + "" + window.location.pathname;
+            console.log(url);
+            console.log(params);
+            console.log(hrefUrl);
+            CoreUtil.sendAjax("/sys/user/login",JSON.stringify(data),function (res) {
+                CoreUtil.setData("access_token",res.data.accessToken);
+                CoreUtil.setData("refresh_token",res.data.refreshToken);
+                window.location.href = hrefUrl + "?" + "client_id=" + params.client_id + "&response_type=" + params.response_type
+                    + "&username=" + data.username + "&password=" + data.password + "&redirect_uri=" + params.redirect_uri + "&client_secret=" + params.client_secret;
+            });
+            return false;
         });
         //改变下时间间隔、动画类型、高度
         carousel.render({

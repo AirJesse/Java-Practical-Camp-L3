@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirect</title>
+</head>
+<body>
+<script th:inline="javascript">
+    // 获取 URL 中的 code 参数
+    // const urlParams = new URLSearchParams(window.location.search);
+    // 获取 model 属性中的 code 参数
+    const code = [[${code}]];
+
+    // 将 code 传回主窗口
+    if (code) {
+        window.opener.postMessage({ code: code }, 'http://localhost:5173');
+        window.close();
+    }
+</script>
+</body>
+</html>

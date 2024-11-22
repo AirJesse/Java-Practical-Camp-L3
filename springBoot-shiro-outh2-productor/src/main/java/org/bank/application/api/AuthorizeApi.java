@@ -82,10 +82,11 @@ public class AuthorizeApi {
                 if(!login(subject, request)) {//登录失败时跳转到登陆页面
                     model.addAttribute("clientName", outhClientDetails.getClientName());
                     model.addAttribute("redirectURI",redirectURI);
-                    return "login";
+                    return "oauth2login";
+//                    return "login";
                 }
             }
-            String userInfo = (String)subject.getPrincipal();
+                String userInfo = (String)subject.getPrincipal();
             String userId="";
             //目前分两种，要么系统有登录,要么就是userId
             if(userInfo.length()!=36){
@@ -113,7 +114,9 @@ public class AuthorizeApi {
             //根据OAuthResponse返回ResponseEntity响应
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(new URI(response.getLocationUri()));
-            return new ResponseEntity(headers, HttpStatus.valueOf(response.getResponseStatus()));
+            model.addAttribute("code", authorizationCode);
+            return "redirect";
+//            return new ResponseEntity(headers, HttpStatus.valueOf(response.getResponseStatus()));
         } catch (OAuthProblemException e) {
             //出错处理
             String redirectUri = e.getRedirectUri();
@@ -146,6 +149,7 @@ public class AuthorizeApi {
         vo.setType("1");
         try {
             String token=userService.loginForOuth(vo);
+//            UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
             CustomPasswordToken customPasswordToken = new CustomPasswordToken(token, ReqType.OUTHCODE.toString());
             subject.login(customPasswordToken);
             return true;

@@ -71,7 +71,6 @@ export default {
                         });
                         const satoken = Cookies.get('satoken');
                         console.log(satoken);
-                        console.log(satoken.expires);
                         Cookies.set('username', this.loginForm.username);
                     
                         this.$router.push('/home');

@@ -5,7 +5,7 @@
     </el-header>
     <el-divider />
     <el-main class="balance-main">
-      <div v-if="!accessToken">
+      <div v-if="needAuth">
         <el-button class="authButton" type="primary" @click="authorize">登入银行系统以获取授权</el-button>
         <el-alert class="infoAlert" title="偏差提示" description="这里采用了监听新窗口回传事件的方式来获取Code,而非使用redirect_uri跳转。我觉得这更符合主流做法。" show-icon effect="light" type="info" :closable="false" />
       </div>
@@ -26,16 +26,13 @@ export default {
   name: 'Balance',
   data() {
     return {
-      accessToken: null,
+      needAuth: true,
       username: '',
       balance: 0
     };
   },
   created() {
-    this.checkAccessToken();
-    if (this.accessToken) {
-      this.fetchBalance();
-    }
+    this.fetchBalance(null);
   },
   methods: {
     authorize() {
@@ -50,76 +47,86 @@ export default {
       const authWindow = window.open(authUrl, '_blank', 'width=500,height=600');
       window.addEventListener('message', this.receiveMessage, false);
     },
+
     receiveMessage(event) {
       console.log('Received message:', event);
       const { code } = event.data;
       if (code) {
-        this.fetchAccessToken(code);
+        this.fetchBalance(code);
       }
     },
 
-    async fetchAccessToken(code) {
+    // async fetchAccessToken(code) {
+    //   try {
+    //     const host = import.meta.env.VITE_APP_BANK_API;
+    //     const access_token_url = `${host}/outh/accessTokenByCode?code=${code}`;
+    //     const response = await fetch(access_token_url, {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded'
+    //       },
+    //     });
+    //     const data = await response.json();
+    //     this.accessToken = data.access_token;
+    //     // localStorage.setItem('accessToken', this.accessToken);
+    //     Cookies.set('bank_accessToken', this.accessToken);
+    //     window.history.replaceState({}, document.title, window.location.pathname);
+    //     this.fetchBalance();
+    //   } catch (error) {
+    //     console.error('Error fetching access token:', error);
+    //   }
+    // },
+
+
+    // async checkAccessToken() {
+    //   // const urlParams = new URLSearchParams(window.location.search);
+    //   // const code = urlParams.get('code');
+    //   // if (code) {
+    //   //   try {
+    //   //     const host = import.meta.env.VITE_APP_BANK_API;
+    //   //     const response = await fetch(host+'/outh/accessTokenByCode', {
+    //   //       method: 'GET',
+    //   //       headers: {
+    //   //         'Content-Type': 'application/x-www-form-urlencoded'
+    //   //       },
+    //   //       body: new URLSearchParams({
+    //   //         code: code,
+    //   //       })
+    //   //     });
+    //   //     const data = await response.json();
+    //   //     this.accessToken = data.access_token;
+    //   //     localStorage.setItem('accessToken', this.accessToken);
+    //   //     window.history.replaceState({}, document.title, window.location.pathname);
+    //   //   } catch (error) {
+    //   //     console.error('Error fetching access token:', error);
+    //   //   }
+    //   // } else {
+    //   //   this.accessToken = localStorage.getItem('accessToken');
+    //   // }
+
+    //   this.accessToken = Cookies.get('bank_accessToken');
+    // },
+    async fetchBalance(code) {
       try {
-        const host = import.meta.env.VITE_APP_BANK_API;
-        const access_token_url = `${host}/outh/accessTokenByCode?code=${code}`;
-        const response = await fetch(access_token_url, {
+        const host = import.meta.env.VITE_APP_BASE_API;
+        const params = new URLSearchParams();
+        if(code){
+          params.append('code', code);
+        } 
+        const response = await fetch(`${host}/third/myMoney?${params.toString()}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/json'
           },
-        });
-        const data = await response.json();
-        this.accessToken = data.access_token;
-        // localStorage.setItem('accessToken', this.accessToken);
-        Cookies.set('bank_accessToken', this.accessToken);
-        window.history.replaceState({}, document.title, window.location.pathname);
-        this.fetchBalance();
-      } catch (error) {
-        console.error('Error fetching access token:', error);
-      }
-    },
-
-
-    async checkAccessToken() {
-      // const urlParams = new URLSearchParams(window.location.search);
-      // const code = urlParams.get('code');
-      // if (code) {
-      //   try {
-      //     const host = import.meta.env.VITE_APP_BANK_API;
-      //     const response = await fetch(host+'/outh/accessTokenByCode', {
-      //       method: 'GET',
-      //       headers: {
-      //         'Content-Type': 'application/x-www-form-urlencoded'
-      //       },
-      //       body: new URLSearchParams({
-      //         code: code,
-      //       })
-      //     });
-      //     const data = await response.json();
-      //     this.accessToken = data.access_token;
-      //     localStorage.setItem('accessToken', this.accessToken);
-      //     window.history.replaceState({}, document.title, window.location.pathname);
-      //   } catch (error) {
-      //     console.error('Error fetching access token:', error);
-      //   }
-      // } else {
-      //   this.accessToken = localStorage.getItem('accessToken');
-      // }
-
-      this.accessToken = Cookies.get('bank_accessToken');
-    },
-    async fetchBalance() {
-      try {
-        const host = import.meta.env.VITE_APP_BANK_API;
-        const response = await fetch(`${host}/bank/myMoney`, {
-          headers: {
-            'access_token': `${this.accessToken}`
-          }
+          credentials: 'include' // 确保 cookies 被发送
         });
         const data = await response.json();
         console.log('Balance data:', data);
-        this.username = data.data.userName;
-        this.balance = data.data.money;
+        if(data.code == 200){
+          this.needAuth = false;
+          this.username = data.data.username;
+          this.balance = data.data.balance;
+        }
       } catch (error) {
         console.error('Error fetching balance:', error);
       }

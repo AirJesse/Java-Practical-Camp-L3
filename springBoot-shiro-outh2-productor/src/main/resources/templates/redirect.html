@@ -13,7 +13,7 @@
 
     // 将 code 传回主窗口
     if (code) {
-        window.opener.postMessage({ code: code }, 'http://139.196.183.15:5173');
+        window.opener.postMessage({ code: code }, '*');
         window.close();
     }
 </script>

@@ -55,57 +55,6 @@ export default {
         this.fetchBalance(code);
       }
     },
-
-    // async fetchAccessToken(code) {
-    //   try {
-    //     const host = import.meta.env.VITE_APP_BANK_API;
-    //     const access_token_url = `${host}/outh/accessTokenByCode?code=${code}`;
-    //     const response = await fetch(access_token_url, {
-    //       method: 'GET',
-    //       headers: {
-    //         'Content-Type': 'application/x-www-form-urlencoded'
-    //       },
-    //     });
-    //     const data = await response.json();
-    //     this.accessToken = data.access_token;
-    //     // localStorage.setItem('accessToken', this.accessToken);
-    //     Cookies.set('bank_accessToken', this.accessToken);
-    //     window.history.replaceState({}, document.title, window.location.pathname);
-    //     this.fetchBalance();
-    //   } catch (error) {
-    //     console.error('Error fetching access token:', error);
-    //   }
-    // },
-
-
-    // async checkAccessToken() {
-    //   // const urlParams = new URLSearchParams(window.location.search);
-    //   // const code = urlParams.get('code');
-    //   // if (code) {
-    //   //   try {
-    //   //     const host = import.meta.env.VITE_APP_BANK_API;
-    //   //     const response = await fetch(host+'/outh/accessTokenByCode', {
-    //   //       method: 'GET',
-    //   //       headers: {
-    //   //         'Content-Type': 'application/x-www-form-urlencoded'
-    //   //       },
-    //   //       body: new URLSearchParams({
-    //   //         code: code,
-    //   //       })
-    //   //     });
-    //   //     const data = await response.json();
-    //   //     this.accessToken = data.access_token;
-    //   //     localStorage.setItem('accessToken', this.accessToken);
-    //   //     window.history.replaceState({}, document.title, window.location.pathname);
-    //   //   } catch (error) {
-    //   //     console.error('Error fetching access token:', error);
-    //   //   }
-    //   // } else {
-    //   //   this.accessToken = localStorage.getItem('accessToken');
-    //   // }
-
-    //   this.accessToken = Cookies.get('bank_accessToken');
-    // },
     async fetchBalance(code) {
       try {
         const host = import.meta.env.VITE_APP_BASE_API;

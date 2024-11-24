@@ -12,7 +12,8 @@
       <div v-else>
         <p>用户名: {{ username }}</p>
         <p>余额: {{ balance }}</p>
-        <el-alert class="infoAlert" title="操作提示" description="采用会话Cookie来保存各类凭证，注销会清空本域Cookie。如遇各种问题，建议重启浏览器。" show-icon effect="light" type="info" :closable="false" />
+        <el-button class="unBindButton" type="danger" @click="unBind">解绑</el-button>
+        <el-alert class="infoAlert" title="操作提示" description="后端会存储当前账号所获得的银行后台凭证。重复实验需先解绑。" show-icon effect="light" type="info" :closable="false" />
       </div>
 
     </el-main>
@@ -53,6 +54,27 @@ export default {
       const { code } = event.data;
       if (code) {
         this.fetchBalance(code);
+      }
+    },
+    async unBind(){
+      try {
+        const host = import.meta.env.VITE_APP_BASE_API;
+        const response = await fetch(`${host}/third/unBindBank`, {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json'
+          },
+          credentials: 'include' // 确保 cookies 被发送
+        });
+        const data = await response.json();
+        console.log('Unbind data:', data);
+        if(data.code == 200){
+          this.needAuth = true;
+          this.username = '';
+          this.balance = 0;
+        }
+      } catch (error) {
+        console.error('Error unbinding:', error);
       }
     },
     async fetchBalance(code) {

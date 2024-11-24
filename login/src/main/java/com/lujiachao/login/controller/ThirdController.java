@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,5 +42,12 @@ public class ThirdController {
         }
         accessToken = thirdService.getBankAccessToken(code, userId);
         return new ResultBody(thirdService.getMyMoney(accessToken));
+    }
+
+    @PostMapping("/unBindBank")
+    public ResultBody unBindBank(){
+        int userId = Integer.parseInt((String) StpUtil.getLoginId());
+        redisTemplate.delete(Constant.BANK_ACCESS_TOKEN_KEY + userId);
+        return new ResultBody(200, "解绑成功");
     }
 }
